@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tableau de bord | AcadWrite+</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header class="site-header" id="site-header"></header>
+
+<main class="container">
+  <h1>Tableau de bord</h1>
+  <div id="alert-box"></div>
+
+  <div class="card" id="profile-card">
+    <h2>Mon profil</h2>
+    <div id="profile-info">Chargement...</div>
+  </div>
+
+  <div class="card">
+    <div class="flex-between">
+      <h2 class="no-margin">Mes demandes</h2>
+      <a href="/submit.html" class="btn">+ Nouvelle demande</a>
+    </div>
+    <div id="requests-list" class="mt-1">Chargement...</div>
+  </div>
+</main>
+
+<footer class="site-footer">AcadWrite+ &mdash; Plateforme d'aide academique pour le contexte universitaire algerien.</footer>
+
+<script src="/js/api.js"></script>
+<script src="/js/nav.js"></script>
+<script src="/js/motion.js"></script>
+<script src="/js/dashboard.js"></script>
+</body>
+</html>

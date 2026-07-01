@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Espace administrateur | AcadWrite+</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header class="site-header" id="site-header"></header>
+
+<main class="container">
+  <h1>Espace administrateur</h1>
+  <div id="alert-box"></div>
+
+  <div class="tabs" id="admin-tabs">
+    <button type="button" data-tab="requests" class="active">Demandes</button>
+    <button type="button" data-tab="users">Utilisateurs</button>
+  </div>
+
+  <div id="tab-requests">
+    <div class="card">
+      <h2>Toutes les demandes</h2>
+      <div id="requests-table">Chargement...</div>
+    </div>
+    <div class="card hidden" id="request-detail-card"></div>
+  </div>
+
+  <div id="tab-users" class="hidden">
+    <div class="card">
+      <h2>Utilisateurs inscrits</h2>
+      <div id="users-table">Chargement...</div>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">AcadWrite+ &mdash; Plateforme d'aide academique pour le contexte universitaire algerien.</footer>
+
+<script src="/js/api.js"></script>
+<script src="/js/nav.js"></script>
+<script src="/js/motion.js"></script>
+<script src="/js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nouvelle demande | AcadWrite+</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header class="site-header" id="site-header"></header>
+
+<main class="container">
+  <h1>Deposer une nouvelle demande</h1>
+  <div id="alert-box"></div>
+
+  <div class="card">
+    <form class="form" id="submit-form" enctype="multipart/form-data">
+      <div class="field">
+        <label for="type">Type de demande</label>
+        <select id="type" name="type" required>
+          <option value="correction">Correction / relecture</option>
+          <option value="traduction">Traduction</option>
+          <option value="redaction">Aide a la redaction academique</option>
+        </select>
+      </div>
+
+      <div class="row hidden" id="lang-fields">
+        <div class="field">
+          <label for="source_lang">Langue source</label>
+          <select id="source_lang" name="source_lang">
+            <option value="arabe">Arabe</option>
+            <option value="francais">Francais</option>
+            <option value="anglais">Anglais</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="target_lang">Langue cible</label>
+          <select id="target_lang" name="target_lang">
+            <option value="francais">Francais</option>
+            <option value="arabe">Arabe</option>
+            <option value="anglais">Anglais</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="title">Titre de la demande</label>
+        <input type="text" id="title" name="title" required placeholder="Ex: Correction chapitre 2 de mon memoire">
+      </div>
+
+      <div class="field">
+        <label for="description">Description</label>
+        <textarea id="description" name="description" placeholder="Precisez vos attentes, delais, style academique attendu, etc."></textarea>
+      </div>
+
+      <div class="field">
+        <label for="document">Document (PDF, Word, ODT ou TXT - 4 Mo max)</label>
+        <input type="file" id="document" name="document" accept=".pdf,.doc,.docx,.odt,.txt">
+      </div>
+
+      <button type="submit" class="btn">Envoyer la demande</button>
+    </form>
+  </div>
+</main>
+
+<footer class="site-footer">AcadWrite+ &mdash; Plateforme d'aide academique pour le contexte universitaire algerien.</footer>
+
+<script src="/js/api.js"></script>
+<script src="/js/nav.js"></script>
+<script src="/js/motion.js"></script>
+<script src="/js/submit.js"></script>
+</body>
+</html>

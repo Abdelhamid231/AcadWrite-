@@ -1,0 +1,26 @@
+{
+  "name": "acadwrite-plus",
+  "version": "1.0.0",
+  "description": "AcadWrite+ - plateforme d'aide a la redaction academique, methodologie, traduction et correction",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "dependencies": {
+    "@vercel/blob": "^2.5.0",
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "mammoth": "^1.12.0",
+    "multer": "^2.0.1",
+    "pdf-parse": "^2.4.5",
+    "pg": "^8.13.1"
+  }
+}
