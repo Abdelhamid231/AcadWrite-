@@ -5,6 +5,7 @@ const { pool } = require("../db");
 const { requireAuth } = require("../middleware/auth");
 const asyncHandler = require("../lib/asyncHandler");
 const { uploadToBlob, fetchBlobBuffer, sendAsDownload } = require("../lib/blobStorage");
+const userError = require("../lib/appError");
 
 const router = express.Router();
 
@@ -14,7 +15,7 @@ const upload = multer({
   fileFilter: (req, file, cb) => {
     const allowed = [".pdf", ".doc", ".docx", ".odt", ".txt"];
     if (allowed.includes(path.extname(file.originalname).toLowerCase())) cb(null, true);
-    else cb(new Error("Type de fichier non autorise (pdf, doc, docx, odt, txt uniquement)."));
+    else cb(userError("Type de fichier non autorise (pdf, doc, docx, odt, txt uniquement)."));
   },
 });
 

@@ -1,8 +1,14 @@
 const jwt = require("jsonwebtoken");
 
 const COOKIE_NAME = "token";
-const JWT_SECRET = process.env.JWT_SECRET || "dev-insecure-secret-change-me";
 const MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
+
+if (!process.env.JWT_SECRET) {
+  throw new Error(
+    "JWT_SECRET n'est pas defini. Definissez une valeur secrete longue et aleatoire avant de demarrer le serveur."
+  );
+}
+const JWT_SECRET = process.env.JWT_SECRET;
 
 function publicUser(user) {
   return { id: user.id, name: user.name, email: user.email, level: user.level, role: user.role };

@@ -3,6 +3,7 @@ const { pool } = require("../db");
 const supabase = require("../lib/supabaseClient");
 const { setAuthCookie, clearAuthCookie, getUserFromReq, publicUser } = require("../middleware/auth");
 const asyncHandler = require("../lib/asyncHandler");
+const { authLimiter } = require("../lib/rateLimiters");
 
 const router = express.Router();
 
@@ -10,6 +11,7 @@ const VALID_LEVELS = ["licence", "master", "doctorat", "enseignant", "libre"];
 
 router.post(
   "/register",
+  authLimiter,
   asyncHandler(async (req, res) => {
     const { name, email, password, level } = req.body || {};
 
@@ -49,6 +51,7 @@ router.post(
 
 router.post(
   "/login",
+  authLimiter,
   asyncHandler(async (req, res) => {
     const { email, password } = req.body || {};
     if (!email || !password) {

@@ -3,6 +3,8 @@ const path = require("path");
 const multer = require("multer");
 const mammoth = require("mammoth");
 const { requireAuth } = require("../middleware/auth");
+const userError = require("../lib/appError");
+const { aiLimiter } = require("../lib/rateLimiters");
 
 const router = express.Router();
 
@@ -16,7 +18,7 @@ const upload = multer({
   fileFilter: (req, file, cb) => {
     const allowed = [".txt", ".pdf", ".docx"];
     if (allowed.includes(path.extname(file.originalname).toLowerCase())) cb(null, true);
-    else cb(new Error("Fichier non supporte pour l'assistant IA (txt, pdf ou docx uniquement)."));
+    else cb(userError("Fichier non supporte pour l'assistant IA (txt, pdf ou docx uniquement)."));
   },
 });
 
@@ -51,7 +53,7 @@ async function extractFileText(file) {
   return "";
 }
 
-router.post("/chat", requireAuth, (req, res) => {
+router.post("/chat", requireAuth, aiLimiter, (req, res) => {
   upload.single("file")(req, res, async (uploadErr) => {
     if (uploadErr) {
       return res.status(400).json({ error: uploadErr.message || "Erreur lors du televersement du fichier." });
