@@ -6,12 +6,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     user = null;
   }
 
-  const isTeacher = !!user && user.role === "user" && user.level === "enseignant";
-  if (isTeacher) {
-    const cta = document.getElementById("hero-cta");
-    if (cta) {
-      cta.href = "/formations.html";
-      cta.textContent = "Voir les cours";
-    }
+  const cta = document.getElementById("hero-cta");
+  if (!user || !cta) return;
+
+  if (user.role === "admin") {
+    cta.href = "/admin.html";
+    cta.textContent = "Administration";
+  } else if (user.level === "enseignant") {
+    cta.href = "/formations.html";
+    cta.textContent = "Voir les cours";
   }
 });

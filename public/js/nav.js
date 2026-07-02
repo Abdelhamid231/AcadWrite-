@@ -9,7 +9,7 @@ async function renderNav() {
     user = null;
   }
 
-  const isTeacher = !!user && user.role === "user" && user.level === "enseignant";
+  const isStudent = !!user && user.role === "user" && user.level !== "enseignant";
 
   const links = [
     `<a href="/index.html">Accueil</a>`,
@@ -20,7 +20,7 @@ async function renderNav() {
 
   let rightSide;
   if (user) {
-    if (!isTeacher) {
+    if (isStudent) {
       links.push(`<a href="/dashboard.html">Tableau de bord</a>`);
     }
     if (user.role === "admin") {

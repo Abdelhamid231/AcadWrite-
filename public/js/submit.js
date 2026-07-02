@@ -11,6 +11,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     window.location.href = "/login.html";
     return;
   }
+  if (user.role === "admin") {
+    window.location.href = "/admin.html";
+    return;
+  }
   if (user.role === "user" && user.level === "enseignant") {
     window.location.href = "/formations.html";
     return;
