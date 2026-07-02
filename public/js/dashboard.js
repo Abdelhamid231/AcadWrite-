@@ -1,7 +1,9 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const alertBox = document.getElementById("alert-box");
   const profileInfo = document.getElementById("profile-info");
+  const requestsCard = document.getElementById("requests-card");
   const requestsList = document.getElementById("requests-list");
+  const teacherCard = document.getElementById("teacher-card");
 
   let user;
   try {
@@ -17,10 +19,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     window.location.href = "/admin.html";
     return;
   }
-  if (user.role === "user" && user.level === "enseignant") {
-    window.location.href = "/formations.html";
-    return;
-  }
+
+  const isTeacher = user.level === "enseignant";
 
   const LEVEL_LABELS = {
     licence: "Licence",
@@ -35,6 +35,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     <p><strong>Email :</strong> ${user.email}</p>
     <p><strong>Niveau :</strong> ${LEVEL_LABELS[user.level] || user.level}</p>
   `;
+
+  if (isTeacher) {
+    teacherCard.classList.remove("hidden");
+    if (window.refreshMotion) window.refreshMotion();
+    return;
+  }
+
+  requestsCard.classList.remove("hidden");
+  if (window.refreshMotion) window.refreshMotion();
 
   try {
     const data = await apiFetch("/api/requests/mine");

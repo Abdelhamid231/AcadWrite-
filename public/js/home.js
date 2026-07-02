@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     cta.href = "/admin.html";
     cta.textContent = "Administration";
   } else if (user.level === "enseignant") {
-    cta.href = "/formations.html";
-    cta.textContent = "Voir les cours";
+    cta.href = "/dashboard.html";
+    cta.textContent = "Mon espace";
   }
 });

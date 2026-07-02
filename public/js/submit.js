@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
   if (user.role === "user" && user.level === "enseignant") {
-    window.location.href = "/formations.html";
+    window.location.href = "/dashboard.html";
     return;
   }
 
