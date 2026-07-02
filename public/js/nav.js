@@ -9,6 +9,8 @@ async function renderNav() {
     user = null;
   }
 
+  const isTeacher = !!user && user.role === "user" && user.level === "enseignant";
+
   const links = [
     `<a href="/index.html">Accueil</a>`,
     `<a href="/methodologie.html">Methodologie</a>`,
@@ -18,7 +20,9 @@ async function renderNav() {
 
   let rightSide;
   if (user) {
-    links.push(`<a href="/dashboard.html">Tableau de bord</a>`);
+    if (!isTeacher) {
+      links.push(`<a href="/dashboard.html">Tableau de bord</a>`);
+    }
     if (user.role === "admin") {
       links.push(`<a href="/admin.html">Administration</a>`);
     }

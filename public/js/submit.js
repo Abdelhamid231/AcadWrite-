@@ -11,6 +11,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     window.location.href = "/login.html";
     return;
   }
+  if (user.role === "user" && user.level === "enseignant") {
+    window.location.href = "/formations.html";
+    return;
+  }
 
   const typeSelect = document.getElementById("type");
   const langFields = document.getElementById("lang-fields");

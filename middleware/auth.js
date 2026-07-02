@@ -55,4 +55,27 @@ function requireAdmin(req, res, next) {
   next();
 }
 
-module.exports = { setAuthCookie, clearAuthCookie, getUserFromReq, requireAuth, requireAdmin, publicUser };
+// A "teacher" is a regular (non-admin) account registered with the
+// "enseignant" level. Admin accounts also carry level 'enseignant' but are
+// never restricted by teacher rules since they have their own full access.
+function isTeacher(user) {
+  return !!user && user.role === "user" && user.level === "enseignant";
+}
+
+function blockTeachers(req, res, next) {
+  if (isTeacher(req.user)) {
+    return res.status(403).json({ error: "Cette fonctionnalite n'est pas disponible pour les comptes enseignants." });
+  }
+  next();
+}
+
+module.exports = {
+  setAuthCookie,
+  clearAuthCookie,
+  getUserFromReq,
+  requireAuth,
+  requireAdmin,
+  publicUser,
+  isTeacher,
+  blockTeachers,
+};

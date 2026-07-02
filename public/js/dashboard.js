@@ -13,6 +13,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     window.location.href = "/login.html";
     return;
   }
+  if (user.role === "user" && user.level === "enseignant") {
+    window.location.href = "/formations.html";
+    return;
+  }
 
   const LEVEL_LABELS = {
     licence: "Licence",

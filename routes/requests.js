@@ -2,7 +2,7 @@ const express = require("express");
 const path = require("path");
 const multer = require("multer");
 const { pool } = require("../db");
-const { requireAuth } = require("../middleware/auth");
+const { requireAuth, blockTeachers } = require("../middleware/auth");
 const asyncHandler = require("../lib/asyncHandler");
 const { uploadToBlob, fetchBlobBuffer, sendAsDownload } = require("../lib/blobStorage");
 const userError = require("../lib/appError");
@@ -24,6 +24,7 @@ const VALID_TYPES = ["correction", "traduction", "redaction"];
 router.post(
   "/",
   requireAuth,
+  blockTeachers,
   upload.single("document"),
   asyncHandler(async (req, res) => {
     const { type, title, description, source_lang, target_lang } = req.body || {};

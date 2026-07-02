@@ -2,7 +2,7 @@ const express = require("express");
 const path = require("path");
 const multer = require("multer");
 const { pool } = require("../db");
-const { requireAuth } = require("../middleware/auth");
+const { requireAuth, blockTeachers } = require("../middleware/auth");
 const asyncHandler = require("../lib/asyncHandler");
 const { uploadToBlob } = require("../lib/blobStorage");
 const userError = require("../lib/appError");
@@ -25,6 +25,7 @@ const VALID_METHODS = ["ccp", "baridimob", "edahabia", "virement", "especes"];
 router.post(
   "/",
   requireAuth,
+  blockTeachers,
   upload.single("proof"),
   asyncHandler(async (req, res) => {
     const { request_id, method, reference } = req.body || {};

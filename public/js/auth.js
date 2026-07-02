@@ -1,3 +1,9 @@
+function landingPageFor(user) {
+  if (user.role === "admin") return "/admin.html";
+  if (user.role === "user" && user.level === "enseignant") return "/formations.html";
+  return "/dashboard.html";
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const alertBox = document.getElementById("alert-box");
 
@@ -10,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
       setButtonLoading(submitBtn, true, "Creation du compte...");
       const formData = new FormData(registerForm);
       try {
-        await apiFetch("/api/auth/register", {
+        const data = await apiFetch("/api/auth/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -20,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
             level: formData.get("level"),
           }),
         });
-        window.location.href = "/dashboard.html";
+        window.location.href = landingPageFor(data.user);
       } catch (err) {
         showAlert(alertBox, err.message);
         setButtonLoading(submitBtn, false);
@@ -45,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
             password: formData.get("password"),
           }),
         });
-        window.location.href = data.user.role === "admin" ? "/admin.html" : "/dashboard.html";
+        window.location.href = landingPageFor(data.user);
       } catch (err) {
         showAlert(alertBox, err.message);
         setButtonLoading(submitBtn, false);
