@@ -1,6 +1,6 @@
 const express = require("express");
-const bcrypt = require("bcryptjs");
 const { pool } = require("../db");
+const supabase = require("../lib/supabaseClient");
 const { setAuthCookie, clearAuthCookie, getUserFromReq, publicUser } = require("../middleware/auth");
 const asyncHandler = require("../lib/asyncHandler");
 
@@ -20,16 +20,25 @@ router.post(
       return res.status(400).json({ error: "Le mot de passe doit contenir au moins 6 caracteres." });
     }
     const chosenLevel = VALID_LEVELS.includes(level) ? level : "libre";
+    const normalizedEmail = email.toLowerCase();
 
-    const existing = await pool.query("SELECT id FROM users WHERE email = $1", [email.toLowerCase()]);
+    const existing = await pool.query("SELECT id FROM profiles WHERE email = $1", [normalizedEmail]);
     if (existing.rows.length > 0) {
       return res.status(409).json({ error: "Un compte existe deja avec cet email." });
     }
 
-    const hash = bcrypt.hashSync(password, 10);
+    const { data, error } = await supabase.auth.admin.createUser({
+      email: normalizedEmail,
+      password,
+      email_confirm: true,
+    });
+    if (error) {
+      return res.status(400).json({ error: error.message || "Impossible de creer le compte." });
+    }
+
     const result = await pool.query(
-      "INSERT INTO users (name, email, password_hash, level, role) VALUES ($1, $2, $3, $4, 'user') RETURNING *",
-      [name, email.toLowerCase(), hash, chosenLevel]
+      "INSERT INTO profiles (id, name, email, level, role) VALUES ($1, $2, $3, $4, 'user') RETURNING *",
+      [data.user.id, name, normalizedEmail, chosenLevel]
     );
 
     const user = publicUser(result.rows[0]);
@@ -45,10 +54,19 @@ router.post(
     if (!email || !password) {
       return res.status(400).json({ error: "Email et mot de passe sont requis." });
     }
+    const normalizedEmail = email.toLowerCase();
 
-    const result = await pool.query("SELECT * FROM users WHERE email = $1", [email.toLowerCase()]);
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email: normalizedEmail,
+      password,
+    });
+    if (signInError) {
+      return res.status(401).json({ error: "Email ou mot de passe incorrect." });
+    }
+
+    const result = await pool.query("SELECT * FROM profiles WHERE email = $1", [normalizedEmail]);
     const row = result.rows[0];
-    if (!row || !bcrypt.compareSync(password, row.password_hash)) {
+    if (!row) {
       return res.status(401).json({ error: "Email ou mot de passe incorrect." });
     }
 

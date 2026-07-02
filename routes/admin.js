@@ -17,7 +17,7 @@ router.get(
   "/users",
   asyncHandler(async (req, res) => {
     const result = await pool.query(
-      "SELECT id, name, email, level, role, created_at FROM users ORDER BY created_at DESC"
+      "SELECT id, name, email, level, role, created_at FROM profiles ORDER BY created_at DESC"
     );
     res.json({ users: result.rows });
   })
@@ -28,7 +28,7 @@ router.get(
   asyncHandler(async (req, res) => {
     const result = await pool.query(
       `SELECT r.*, u.name as user_name, u.email as user_email
-       FROM requests r JOIN users u ON u.id = r.user_id
+       FROM requests r JOIN profiles u ON u.id = r.user_id
        ORDER BY r.created_at DESC`
     );
     res.json({ requests: result.rows });
@@ -40,7 +40,7 @@ router.get(
   asyncHandler(async (req, res) => {
     const result = await pool.query(
       `SELECT r.*, u.name as user_name, u.email as user_email
-       FROM requests r JOIN users u ON u.id = r.user_id
+       FROM requests r JOIN profiles u ON u.id = r.user_id
        WHERE r.id = $1`,
       [req.params.id]
     );
