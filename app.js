@@ -11,6 +11,7 @@ const requestRoutes = require("./routes/requests");
 const aiRoutes = require("./routes/ai");
 const paymentRoutes = require("./routes/payments");
 const adminRoutes = require("./routes/admin");
+const courseRoutes = require("./routes/courses");
 
 const app = express();
 
@@ -43,6 +44,7 @@ app.use("/api/requests", requestRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/courses", courseRoutes);
 
 app.use(express.static(path.join(__dirname, "public")));
 

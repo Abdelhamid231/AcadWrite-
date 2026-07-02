@@ -33,6 +33,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const tabs = document.getElementById("admin-tabs");
   const tabRequests = document.getElementById("tab-requests");
   const tabUsers = document.getElementById("tab-users");
+  const tabCourses = document.getElementById("tab-courses");
 
   tabs.addEventListener("click", (e) => {
     const btn = e.target.closest("button[data-tab]");
@@ -42,7 +43,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     const tab = btn.dataset.tab;
     tabRequests.classList.toggle("hidden", tab !== "requests");
     tabUsers.classList.toggle("hidden", tab !== "users");
+    tabCourses.classList.toggle("hidden", tab !== "courses");
     if (tab === "users") loadUsers();
+    if (tab === "courses") loadCourses();
   });
 
   async function loadRequests() {
@@ -232,6 +235,72 @@ document.addEventListener("DOMContentLoaded", async () => {
       showAlert(alertBox, err.message);
     }
   }
+
+  async function loadCourses() {
+    const el = document.getElementById("courses-table");
+    try {
+      const data = await apiFetch("/api/admin/courses");
+      if (!data.courses.length) {
+        el.innerHTML = `<p class="muted">Aucun cours publie pour le moment.</p>`;
+        return;
+      }
+      el.innerHTML = `
+        <table>
+          <thead><tr><th>Titre</th><th>Categorie</th><th>Fichier</th><th>Publie le</th><th></th></tr></thead>
+          <tbody>
+            ${data.courses
+              .map(
+                (c) => `
+              <tr>
+                <td>${c.title}</td>
+                <td>${c.category || "-"}</td>
+                <td><a href="/api/courses/${c.id}/file">${c.original_name}</a></td>
+                <td>${formatDate(c.created_at)}</td>
+                <td><button type="button" class="btn danger delete-course-btn" data-id="${c.id}">Supprimer</button></td>
+              </tr>
+            `
+              )
+              .join("")}
+          </tbody>
+        </table>
+      `;
+      el.querySelectorAll(".delete-course-btn").forEach((btn) => {
+        btn.addEventListener("click", () => deleteCourse(btn.dataset.id));
+      });
+    } catch (err) {
+      showAlert(alertBox, err.message);
+    }
+  }
+
+  async function deleteCourse(id) {
+    if (!window.confirm("Supprimer definitivement ce cours ?")) return;
+    try {
+      await apiFetch(`/api/admin/courses/${id}`, { method: "DELETE" });
+      loadCourses();
+    } catch (err) {
+      showAlert(alertBox, err.message);
+    }
+  }
+
+  const courseForm = document.getElementById("course-form");
+  const courseSubmitBtn = courseForm.querySelector("button[type=submit]");
+  courseForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const courseAlert = document.getElementById("course-alert");
+    clearAlert(courseAlert);
+    setButtonLoading(courseSubmitBtn, true, "Publication...");
+    const formData = new FormData(courseForm);
+    try {
+      await apiFetch("/api/admin/courses", { method: "POST", body: formData });
+      showAlert(courseAlert, "Cours publie.", "success");
+      courseForm.reset();
+      loadCourses();
+    } catch (err) {
+      showAlert(courseAlert, err.message);
+    } finally {
+      setButtonLoading(courseSubmitBtn, false);
+    }
+  });
 
   loadRequests();
 });

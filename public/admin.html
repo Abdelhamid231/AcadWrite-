@@ -16,6 +16,7 @@
   <div class="tabs" id="admin-tabs">
     <button type="button" data-tab="requests" class="active">Demandes</button>
     <button type="button" data-tab="users">Utilisateurs</button>
+    <button type="button" data-tab="courses">Cours</button>
   </div>
 
   <div id="tab-requests">
@@ -30,6 +31,36 @@
     <div class="card">
       <h2>Utilisateurs inscrits</h2>
       <div id="users-table">Chargement...</div>
+    </div>
+  </div>
+
+  <div id="tab-courses" class="hidden">
+    <div class="card">
+      <h2>Ajouter un cours</h2>
+      <div id="course-alert"></div>
+      <form class="form" id="course-form" enctype="multipart/form-data">
+        <div class="field">
+          <label for="course-title">Titre</label>
+          <input type="text" id="course-title" name="title" required>
+        </div>
+        <div class="field">
+          <label for="course-category">Categorie</label>
+          <input type="text" id="course-category" name="category" placeholder="Ex: Methodologie, Traduction, Licence...">
+        </div>
+        <div class="field">
+          <label for="course-description">Description</label>
+          <textarea id="course-description" name="description"></textarea>
+        </div>
+        <div class="field">
+          <label for="course-document">Document (PDF, DOC ou DOCX - 4 Mo max)</label>
+          <input type="file" id="course-document" name="document" accept=".pdf,.doc,.docx" required>
+        </div>
+        <button type="submit" class="btn">Publier le cours</button>
+      </form>
+    </div>
+    <div class="card">
+      <h2>Cours publies</h2>
+      <div id="courses-table">Chargement...</div>
     </div>
   </div>
 </main>

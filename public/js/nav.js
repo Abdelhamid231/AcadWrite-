@@ -12,6 +12,7 @@ async function renderNav() {
   const links = [
     `<a href="/index.html">Accueil</a>`,
     `<a href="/methodologie.html">Methodologie</a>`,
+    `<a href="/formations.html">Formations</a>`,
     `<a href="/assistant.html">Assistant IA</a>`,
   ];
 

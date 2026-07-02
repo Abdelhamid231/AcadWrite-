@@ -1,13 +1,25 @@
 const express = require("express");
+const path = require("path");
 const multer = require("multer");
 const { pool } = require("../db");
 const { requireAdmin } = require("../middleware/auth");
 const asyncHandler = require("../lib/asyncHandler");
-const { uploadToBlob, fetchBlobBuffer, sendAsDownload } = require("../lib/blobStorage");
+const { uploadToBlob, fetchBlobBuffer, sendAsDownload, deleteBlob } = require("../lib/blobStorage");
+const userError = require("../lib/appError");
 
 const router = express.Router();
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 4 * 1024 * 1024 } });
+
+const courseUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 4 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const allowed = [".pdf", ".doc", ".docx"];
+    if (allowed.includes(path.extname(file.originalname).toLowerCase())) cb(null, true);
+    else cb(userError("Type de fichier non autorise (pdf, doc, docx uniquement)."));
+  },
+});
 
 router.use(requireAdmin);
 
@@ -131,6 +143,91 @@ router.patch(
     }
 
     res.json({ payment: updated.rows[0] });
+  })
+);
+
+router.get(
+  "/courses",
+  asyncHandler(async (req, res) => {
+    const result = await pool.query("SELECT * FROM courses ORDER BY created_at DESC");
+    res.json({ courses: result.rows });
+  })
+);
+
+router.post(
+  "/courses",
+  courseUpload.single("document"),
+  asyncHandler(async (req, res) => {
+    const { title, description, category } = req.body || {};
+    if (!title) {
+      return res.status(400).json({ error: "Le titre est requis." });
+    }
+    if (!req.file) {
+      return res.status(400).json({ error: "Un fichier (pdf, doc ou docx) est requis." });
+    }
+
+    const filePath = await uploadToBlob("courses", req.file);
+
+    const result = await pool.query(
+      `INSERT INTO courses (title, description, category, file_path, original_name)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING *`,
+      [title, description || null, category || null, filePath, req.file.originalname]
+    );
+
+    res.json({ course: result.rows[0] });
+  })
+);
+
+router.patch(
+  "/courses/:id",
+  courseUpload.single("document"),
+  asyncHandler(async (req, res) => {
+    const existing = await pool.query("SELECT * FROM courses WHERE id = $1", [req.params.id]);
+    const course = existing.rows[0];
+    if (!course) return res.status(404).json({ error: "Cours introuvable." });
+
+    const { title, description, category } = req.body || {};
+
+    let filePath = null;
+    let originalName = null;
+    if (req.file) {
+      filePath = await uploadToBlob("courses", req.file);
+      originalName = req.file.originalname;
+    }
+
+    const updated = await pool.query(
+      `UPDATE courses SET
+         title = COALESCE($1, title),
+         description = COALESCE($2, description),
+         category = COALESCE($3, category),
+         file_path = COALESCE($4, file_path),
+         original_name = COALESCE($5, original_name),
+         updated_at = NOW()
+       WHERE id = $6
+       RETURNING *`,
+      [title || null, description || null, category || null, filePath, originalName, course.id]
+    );
+
+    if (filePath) {
+      await deleteBlob(course.file_path);
+    }
+
+    res.json({ course: updated.rows[0] });
+  })
+);
+
+router.delete(
+  "/courses/:id",
+  asyncHandler(async (req, res) => {
+    const existing = await pool.query("SELECT * FROM courses WHERE id = $1", [req.params.id]);
+    const course = existing.rows[0];
+    if (!course) return res.status(404).json({ error: "Cours introuvable." });
+
+    await pool.query("DELETE FROM courses WHERE id = $1", [course.id]);
+    await deleteBlob(course.file_path);
+
+    res.json({ ok: true });
   })
 );
 
